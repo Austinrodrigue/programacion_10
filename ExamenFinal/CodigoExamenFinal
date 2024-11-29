@@ -67,7 +67,7 @@ def menu():
 
         if opcion == "1":
             juego.reiniciar()
-            print("se eligio un número entre 1 y 100. Intenta adivinarlo Tienes 6 intentos.")
+            print("se eligio un numero entre 1 y 100. Intenta adivinarlo Tienes 6 intentos.")
             while True:
                 try:
                     numero = int(input("Introduce un numero: "))
@@ -77,7 +77,7 @@ def menu():
                         jugador.registrarIntento(juego.intentos, resultado == "exactamente ese era el numero")
                         break
                 except ValueError:
-                    print("Por favor, introduce un número válido.")
+                    print("Por favor, introduce un número valido.")
         elif opcion == "2":
             print(jugador.mostrarEstadisticas())
         elif opcion == "3":
@@ -85,7 +85,7 @@ def menu():
             print("adios vuelve pronto")
             break
         else:
-            print("Opción no valida. Por favor, selecciona una opcion del menu")
+            print("Opcion no valida. Por favor, selecciona una opcion del menu")
 
 if __name__ == "__main__":
     menu()
