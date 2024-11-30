@@ -1,0 +1,91 @@
+import random
+
+class JuegoAdivinanza:
+    def __init__(self):
+        self.numero_secreto = random.randint(1, 100)
+        self.intentos = 0
+        self.limite_intentos = 6
+
+    def validarNumero(self, numero):
+        self.intentos += 1
+        if self.intentos > self.limite_intentos:
+            return "Se han acabado los intentos.Perdistes el numero era otro, pero intentalo de nuevo"
+        if numero < self.numero_secreto:
+            return "El numero es mayor."
+        elif numero > self.numero_secreto:
+            return "El numero es menor."
+        else:
+            return "exactamente ese era el numero"
+
+    def reiniciar(self):
+        self.numero_secreto = random.randint(1, 100)
+        self.intentos = 0
+class Jugador:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.historial = []
+
+    def registrarIntento(self, intentos, gano):
+        self.historial.append((intentos, gano))
+
+    def mostrarEstadisticas(self):
+        if not self.historial:
+            return "No hay partidas jugadas, vuelve cuando jueges."
+        total_partidas = len(self.historial)
+        partidas_ganadas = sum(1 for intentos, gano in self.historial if gano)
+        porcentaje_aciertos = (partidas_ganadas / total_partidas) * 100
+        return f"Partidas jugadas: {total_partidas}\n" \
+               f"Partidas ganadas: {partidas_ganadas}\n" \
+               f"Porcentaje de aciertos: {porcentaje_aciertos:.2f}%"
+def guardarEstadisticas(jugador):
+    with open("estadisticas.txt", "w") as file:
+        for intentos, gano in jugador.historial:
+            file.write(f"{intentos} {gano}\n")
+
+def cargarEstadisticas(jugador):
+    try:
+        with open("estadisticas.txt", "r") as file:
+            for line in file:
+                intentos, gano = line.strip().split()
+                jugador.historial.append((int(intentos), gano == "True"))
+    except FileNotFoundError:
+        pass
+
+def menu():
+    print("Bienvenido al Juego de Adivinanza de Números")
+    nombre = input("Introduce tu nombre: ")
+    jugador = Jugador(nombre)
+    cargarEstadisticas(jugador)
+    juego = JuegoAdivinanza()
+
+    while True:
+        print("\nMenu:")
+        print("1. Comenzar una nueva partida")
+        print("2. Ver las estadisticas del jugador")
+        print("3. Salir del juego")
+        opcion = input("Selecciona una opcion: ")
+
+        if opcion == "1":
+            juego.reiniciar()
+            print("se eligio un numero entre 1 y 100. Intenta adivinarlo Tienes 6 intentos.")
+            while True:
+                try:
+                    numero = int(input("Introduce un numero: "))
+                    resultado = juego.validarNumero(numero)
+                    print(resultado)
+                    if resultado == "exactamente ese era el numero" or "Se han acabado los intentos.Perdistes el numero era otro, pero intentalo de nuevo" in resultado:
+                        jugador.registrarIntento(juego.intentos, resultado == "exactamente ese era el numero")
+                        break
+                except ValueError:
+                    print("Por favor, introduce un número valido.")
+        elif opcion == "2":
+            print(jugador.mostrarEstadisticas())
+        elif opcion == "3":
+            guardarEstadisticas(jugador)
+            print("adios vuelve pronto")
+            break
+        else:
+            print("Opcion no valida. Por favor, selecciona una opcion del menu")
+
+if __name__ == "__main__":
+    menu()
